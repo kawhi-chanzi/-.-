@@ -2,3 +2,7 @@
 cmake-build-*/
 _pycache_/
 *.user
+
+# 编译产物，不需要进版本库
+*.exe
+*.o
