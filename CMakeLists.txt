@@ -10,9 +10,16 @@ project(ecosystem_simulation CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# MSVC 编译器下按 UTF-8 读取源码，保证中文输出不乱码
-if (MSVC)
-    add_compile_options(/utf-8)
+# ============ 中文输出编码 ============
+# 源文件是 UTF-8，这里也统一让编译器把中文字面量按 UTF-8 写进 exe。
+# 控制台那边则由 main.cpp 开头的 SetConsoleOutputCP(CP_UTF8) 负责切到 UTF-8，
+# 两边都是 UTF-8，中文就不会乱码，也不需要手动敲 chcp。
+if (WIN32)
+    if (MSVC)
+        add_compile_options(/utf-8)
+    else ()
+        add_compile_options(-finput-charset=UTF-8 -fexec-charset=UTF-8)
+    endif ()
 endif ()
 
 # 本项目全部源文件。

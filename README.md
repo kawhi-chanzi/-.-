@@ -133,14 +133,12 @@ git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"
 **方式一：命令行（g++ / MinGW）**
 
 ```bash
-g++ -std=c++17 main.cpp Organism.cpp Fish.cpp bigFish.cpp smallFish.cpp World.cpp -o ecosystem
+g++ -std=c++17 *.cpp -o ecosystem.exe
 ```
 
-Windows 下如果运行时中文显示乱码，加上编码参数，指定源码和可执行文件都用 UTF-8：
-
-```bash
-g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 main.cpp Organism.cpp Fish.cpp bigFish.cpp smallFish.cpp World.cpp -o ecosystem
-```
+> 中文不会乱码。程序启动时会自己调用 `SetConsoleOutputCP(CP_UTF8)` 把控制台切成 UTF-8，
+> 所以**不需要**额外的编码参数，也**不需要**手动敲 `chcp 65001`。
+> 唯一的硬性要求：所有源文件必须是 **UTF-8** 编码（目前都是）。
 
 **方式二：CLion**
 
@@ -155,6 +153,11 @@ g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 main.cpp Organism.cpp 
 > 链接时就会报一堆 `undefined reference`。
 >
 > 顺带一提：CLion 自带 cmake，所以本机即使没装 cmake 也能正常构建。
+
+> ⚠️ **注意别让编辑器改掉文件编码**。本项目的源文件统一是 UTF-8，
+> 但有些编辑器（比如 CLion 遇到系统中文环境时）保存文件会按 GBK 重存，
+> 一旦某个文件变成 GBK，中文就会出问题。
+> 建议把 `Settings → Editor → File Encodings` 里的三项都设成 **UTF-8**。
 
 ### 三、运行
 
