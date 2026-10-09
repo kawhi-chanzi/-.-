@@ -94,18 +94,65 @@ Organism                 生物基类：alive / age / age_max
 
 地图符号：`.` 表示水域，`B` 表示大鱼，`s` 表示小鱼。
 
-## 编译与运行
+## 运行方法
+
+### 一、获取代码
+
+本仓库使用 **SSH** 方式连接 GitHub（HTTPS 直连在本机网络环境下不稳定，经常超时连不上）。
+
+```bash
+# SSH 方式（本项目当前使用的连接方式）
+git clone git@github.com:kawhi-chanzi/-.-.git ecosystem
+cd ecosystem
+
+# HTTPS 方式（备用）
+git clone https://github.com/kawhi-chanzi/-.-.git ecosystem
+```
+
+> 仓库原名是 `-.-`，直接克隆会得到一个叫 `-.-` 的目录，在命令行里很不好操作，
+> 所以上面多加了一个 `ecosystem` 参数，把克隆下来的目录名改成 `ecosystem`。
+
+换一台电脑用 SSH 克隆，需要先配置 SSH 密钥：
+
+1. 生成密钥：`ssh-keygen -t ed25519 -C "你的邮箱"`
+2. 把 `~/.ssh/id_ed25519.pub` 的内容**整行**复制到 GitHub → Settings → SSH and GPG keys → New SSH key
+3. 测试连接：`ssh -T git@github.com`，看到 `Hi xxx! You've successfully authenticated` 就说明配好了
+
+Windows 下如果 git 报 `Host key verification failed`，是因为 git 自带的 SSH 没配置过主机密钥，
+让 git 改用系统自带的 OpenSSH 就行：
+
+```bash
+git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"
+```
+
+### 二、编译
+
+本项目只有 6 个 `.cpp` 文件，一条命令就能编译完，不需要额外的构建工具。
+
+**方式一：命令行（g++ / MinGW）**
 
 ```bash
 g++ -std=c++17 main.cpp Organism.cpp Fish.cpp bigFish.cpp smallFish.cpp World.cpp -o ecosystem
-./ecosystem
 ```
 
-Windows 下如果控制台中文显示乱码，加上编码参数：
+Windows 下如果运行时中文显示乱码，加上编码参数，指定源码和可执行文件都用 UTF-8：
 
 ```bash
 g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 main.cpp Organism.cpp Fish.cpp bigFish.cpp smallFish.cpp World.cpp -o ecosystem
 ```
+
+**方式二：CLion**
+
+用 CLion 直接打开（Open）项目根目录即可，它会自动扫描出所有源文件，点右上角的运行按钮就能跑。
+
+### 三、运行
+
+```bash
+./ecosystem          # Linux / macOS / Git Bash
+.\ecosystem.exe      # Windows PowerShell / CMD
+```
+
+程序会连续模拟 10 天、每天 3 步，在控制台打印捕食事件、水域地图和每日存活数量。
 
 ## 输出示例
 
