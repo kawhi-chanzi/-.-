@@ -22,6 +22,7 @@
 | `smallFish.h` / `smallFish.cpp` | 小鱼：猎物，被吃掉时提供能量 |
 | `World.h` / `World.cpp` | 世界：管理所有生物、推进时间、捕食判定、清理与汇报 |
 | `main.cpp` | 程序入口：放鱼、按天推进模拟 |
+| `CMakeLists.txt` | 构建配置：列出所有源文件，供 CLion / CMake 编译整个项目 |
 
 ## 类设计
 
@@ -143,7 +144,17 @@ g++ -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 main.cpp Organism.cpp 
 
 **方式二：CLion**
 
-用 CLion 直接打开（Open）项目根目录即可，它会自动扫描出所有源文件，点右上角的运行按钮就能跑。
+项目根目录带了一份 `CMakeLists.txt`，所以用 CLion 直接「Open」**项目根目录**即可：
+
+1. `File → Open`，选中项目根目录（不要只单独打开某个 `.cpp` 文件）
+2. CLion 会自动识别成 CMake 项目并建立索引，右上角的运行按钮就能直接用了
+3. 如果按钮还是灰的，点提示条上的 `Load CMake Project`，或者 `Tools → CMake → Reload CMake Project`
+
+> ⚠️ `CMakeLists.txt` 里列着所有源文件。以后新增 `.cpp` 文件，
+> 一定要把它加进 `add_executable(...)` 的清单，否则它不会被编译，
+> 链接时就会报一堆 `undefined reference`。
+>
+> 顺带一提：CLion 自带 cmake，所以本机即使没装 cmake 也能正常构建。
 
 ### 三、运行
 
