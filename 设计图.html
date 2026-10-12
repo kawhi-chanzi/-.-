@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>生态系统模拟系统 - 类图与流程图</title>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                fontFamily: 'Microsoft YaHei, sans-serif',
+                fontSize: '14px'
+            },
+            class: {
+                diagramPadding: 20
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+        }
+        .diagram-section {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .diagram-section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>生态系统模拟系统 - 设计图</h1>
+
+    <div class="diagram-section">
+        <h2>一、UML 类图</h2>
+        <pre class="mermaid">
+classDiagram
+    class Organism {
+        - bool alive
+        - int age
+        - int age_max
+        + Organism(int life)
+        + virtual void update()
+        + bool isAlive()
+        + virtual ~Organism()
+        + virtual int getX()
+        + virtual int getY()
+        + virtual int foodValue()
+        + virtual bool tryEat(Organism* other)
+        + virtual void kill()
+        + virtual string name()
+        + virtual char symbol()
+    }
+
+    class Fish {
+        - int x
+        - int y
+        - int speed
+        - int energy
+        + Fish(int life, int x, int y, int speed, int energy)
+        + void update()
+        + int getX()
+        + int getY()
+    }
+
+    class smallFish {
+        + smallFish(int x, int y)
+        + void update()
+        + int foodValue()
+        + char symbol()
+        + string name()
+    }
+
+    class bigFish {
+        + bigFish(int x, int y)
+        + void update()
+        + bool tryEat(Organism* other)
+        + char symbol()
+        + string name()
+    }
+
+    class World {
+        - vector~Organism*~ creatures
+        - vector~string~ dayEvents
+        - int day
+        - int stepInDay
+        + static int STEPS_PER_DAY = 3
+        + World()
+        + ~World()
+        + void step()
+        + void show()
+        + void addCreature(Organism* c)
+        - void removeDead()
+        - void reportEvents()
+    }
+
+    Organism <|-- Fish : 继承
+    Fish <|-- smallFish : 继承
+    Fish <|-- bigFish : 继承
+    World o-- Organism : 聚合(1对多)
+
+    note for Organism "抽象基类\n定义所有生物通用接口\n用虚函数实现多态"
+    note for World "持有所有生物的基类指针\n统一调度：移动→捕食→清理→汇报"
+        </pre>
+    </div>
+
+    <div class="diagram-section">
+        <h2>二、核心函数流程图 (World::step())</h2>
+        <pre class="mermaid">
+flowchart TD
+    A([开始 step]) --> B[遍历所有生物]
+    B --> C{生物是否存活?}
+    C -- 否 --> B
+    C -- 是 --> D[c->update()<br/>移动+消耗能量+年龄增长]
+    D --> E{update后是否死亡?}
+    E -- 是 --> F[记录事件: XX死亡]
+    E -- 否 --> G
+    F --> G[遍历所有捕食者 eater]
+    G --> H{eater 已死?}
+    H -- 是 --> G
+    H -- 否 --> I[遍历所有 other 生物]
+    I --> J{eater == other?}
+    J -- 是 --> I
+    J -- 否 --> K{eater->tryEat(other)?}
+    K -- 成功 --> L[记录事件: 大鱼吃掉了小鱼]
+    K -- 失败 --> I
+    L --> M
+    M[removeDead()<br/>删除死亡生物+释放内存] --> N[stepInDay++]
+    N --> O[reportEvents()<br/>有事件则打印]
+    O --> P{stepInDay >= 3?}
+    P -- 否 --> Q([结束本次step])
+    P -- 是 --> R[show()<br/>打印地图+存活统计]
+    R --> S[stepInDay=0, day++]
+    S --> Q
+        </pre>
+    </div>
+
+    <div class="diagram-section">
+        <h2>三、类间关系说明</h2>
+        <ul>
+            <li><strong>继承体系</strong>：Organism（生物基类）→ Fish（鱼类）→ smallFish（小鱼）/ bigFish（大鱼），三层继承体现面向对象的层次化设计。</li>
+            <li><strong>多态机制</strong>：基类 Organism 定义了 update()、tryEat()、foodValue()、symbol() 等虚函数，子类按需覆写。World 只持有 Organism* 基类指针，调用时自动分派到对应子类实现。</li>
+            <li><strong>聚合关系</strong>：World 通过 vector&lt;Organism*&gt; 聚合多个生物对象，生物可以独立于 World 存在，生命周期由 World 统一管理（析构时全部释放）。</li>
+        </ul>
+    </div>
+</body>
+</html>

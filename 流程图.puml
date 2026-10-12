@@ -1,0 +1,55 @@
+@startuml World_step_流程图
+!theme plain
+skinparam backgroundColor white
+skinparam activityFontName Microsoft YaHei
+skinparam activityFontSize 12
+skinparam noteFontName Microsoft YaHei
+
+title World::step() 核心流程流程图
+
+start
+
+:遍历所有生物;
+if (生物是否存活?) then (否)
+  :跳过;
+else (是)
+  :调用 c->update();
+  note right: 移动 + 消耗能量 + 年龄增长
+  if (update 后是否死亡?) then (是)
+    :记录事件 "XX 死亡";
+  endif
+endif
+
+:遍历所有捕食者 eater;
+if (eater 已死?) then (是)
+  :跳过;
+else (否)
+  :遍历所有 other 生物;
+  if (eater == other?) then (是)
+    :跳过(不能吃自己);
+  else (否)
+    if (eater->tryEat(other)?) then (成功)
+      :记录事件 "大鱼吃掉了小鱼";
+    endif
+  endif
+endif
+
+:调用 removeDead();
+note right: 遍历 creatures 容器
+  删除死亡生物对象 + 从容器移除指针
+
+:stepInDay++;
+
+:调用 reportEvents();
+note right: 有事件就打印，没事件就静默
+
+if (stepInDay >= STEPS_PER_DAY?) then (是，一天结束)
+  :调用 show();
+  note right: 打印地图 + 存活数量统计
+  :stepInDay = 0;
+  :day++;
+endif
+
+stop
+
+@enduml

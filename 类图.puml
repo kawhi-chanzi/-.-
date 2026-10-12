@@ -1,0 +1,90 @@
+@startuml 生态系统模拟类图
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam classFontName Microsoft YaHei
+skinparam noteFontName Microsoft YaHei
+
+title 生态系统模拟系统 UML 类图
+
+' ============ 基类：Organism ============
+class Organism {
+    - alive : bool
+    - age : int
+    - age_max : int
+    + Organism(life: int)
+    + update() : void
+    + isAlive() : bool
+    + ~Organism() = default
+    + getX() : int
+    + getY() : int
+    + foodValue() : int
+    + tryEat(other: Organism*) : bool
+    + kill() : void
+    + name() : string
+    + symbol() : char
+}
+
+' ============ 中间层：Fish ============
+class Fish {
+    - x : int
+    - y : int
+    - speed : int
+    - energy : int
+    + Fish(life: int, x: int, y: int, speed: int, energy: int)
+    + update() : void
+    + getX() : int
+    + getY() : int
+}
+
+' ============ 具体类：小鱼 ============
+class smallFish {
+    + smallFish(x: int, y: int)
+    + update() : void
+    + foodValue() : int
+    + symbol() : char
+    + name() : string
+}
+
+' ============ 具体类：大鱼 ============
+class bigFish {
+    + bigFish(x: int, y: int)
+    + update() : void
+    + tryEat(other: Organism*) : bool
+    + symbol() : char
+    + name() : string
+}
+
+' ============ 世界类 ============
+class World {
+    - creatures : vector<Organism*>
+    - dayEvents : vector<string>
+    - day : int
+    - stepInDay : int
+    + STEPS_PER_DAY : int = 3
+    + World()
+    + ~World()
+    + step() : void
+    + show() : void
+    + addCreature(c: Organism*) : void
+    - removeDead() : void
+    - reportEvents() : void
+}
+
+' ============ 关系 ============
+Organism <|-- Fish : 继承
+Fish <|-- smallFish : 继承
+Fish <|-- bigFish : 继承
+World o-- Organism : 聚合 (1对多, vector<Organism*>)
+
+note right of Organism
+  抽象基类，定义所有生物的通用接口
+  用虚函数实现多态：update、tryEat、foodValue 等
+end note
+
+note left of World
+  持有所有生物的基类指针
+  统一调度：移动 → 捕食 → 清理 → 汇报
+end note
+
+@enduml
