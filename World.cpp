@@ -132,11 +132,18 @@ void World::reportEvents()
 
 void World::show()
 {
-    // 1) 先准备一张字符地图，全部填成水域符号 '.'
     char map[MAP_HEIGHT][MAP_WIDTH];
     for (int row = 0; row < MAP_HEIGHT; row++)
     {
         for (int col = 0; col < MAP_WIDTH; col++)
+        {
+            map[row][col] = '#';
+        }
+    }
+
+    for (int row = 0; row < MAP_HEIGHT/2; row++)
+    {
+        for (int col = 0; col < MAP_WIDTH/2; col++)
         {
             map[row][col] = '.';
         }

@@ -32,4 +32,5 @@ add_executable(ecosystem
         bigFish.cpp
         smallFish.cpp
         World.cpp
+        wolf.cpp
 )
