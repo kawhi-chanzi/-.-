@@ -5,6 +5,7 @@
 #include "World.h"
 
 #include <iostream>
+#include <map>
 
 #include "Organism.h"
 using namespace std;
@@ -12,6 +13,28 @@ using namespace std;
 World::World()
     : day(1), stepInDay(0)
 {
+    // 构造函数里把地形底图填一次，等于"把这张地图建好"。
+    // 以前这段填充代码写在 show() 里，每打印一次地图就要重拼一遍；
+    // 提成成员 terrain 之后，只在这里建一次，show() 和 canEnter() 都来读它。
+
+    // 第一步：整张图先统统铺成陆地 '#'
+    for (int row = 0; row < MAP_HEIGHT; row++)
+    {
+        for (int col = 0; col < MAP_WIDTH; col++)
+        {
+            terrain[row][col] = '#';
+        }
+    }
+
+    // 第二步：把左上角挖成一片水域 '.'
+    // 范围是前 MAP_HEIGHT/2 行 × 前 MAP_WIDTH/2 列，也就是左上 5 行 10 列。
+    for (int row = 0; row < MAP_HEIGHT / 2; row++)
+    {
+        for (int col = 0; col < MAP_WIDTH / 2; col++)
+        {
+            terrain[row][col] = '.';
+        }
+    }
 }
 
 World::~World()
@@ -35,11 +58,14 @@ void World::step()
 {
     // 1) 让每个还活着的生物走一步（移动、消耗能量、按年龄判断生死）。
     //    update 之前还活着、之后却死了，说明是自然死亡（老死或者饿死），顺手记成事件。
+    //    注意这里要把自己(this)传给 update：生物移动前要靠 world->canEnter()
+    //    判断目标格的地形，所以它必须拿到当前这个世界。
     for (auto c : creatures)
     {
         if (c->isAlive() == true)
         {
-            c->update();
+
+            c->update(this);
 
             if (c->isAlive() == false)
             {
@@ -132,20 +158,16 @@ void World::reportEvents()
 
 void World::show()
 {
+    // 1) 把地形底图拷一份到局部数组 map 里，再往上画生物。
+    //    为什么不直接用 terrain 本体？因为下面要把生物符号写进格子
+    //    （map[y][x] = c->symbol()），如果直接改 terrain，
+    //    每打印一次地图就会把地形字符覆盖掉，下一轮 canEnter 的判定就失真了。
     char map[MAP_HEIGHT][MAP_WIDTH];
     for (int row = 0; row < MAP_HEIGHT; row++)
     {
         for (int col = 0; col < MAP_WIDTH; col++)
         {
-            map[row][col] = '#';
-        }
-    }
-
-    for (int row = 0; row < MAP_HEIGHT/2; row++)
-    {
-        for (int col = 0; col < MAP_WIDTH/2; col++)
-        {
-            map[row][col] = '.';
+            map[row][col] = terrain[row][col];
         }
     }
 
@@ -186,4 +208,18 @@ void World::show()
     cout << "存活数量: 大鱼 " << bigCount << " 条, 小鱼 " << smallCount
          << " 条, 共 " << (bigCount + smallCount) << " 条" << endl;
     cout << endl;
+}
+bool World::canEnter(int x, int y, char habitat) const
+{
+    // 第一条：越界。地图外面一律进不去。
+    // 注意 x 用 MAP_WIDTH 判、y 用 MAP_HEIGHT 判，别写反了。
+    if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT)
+    {
+        return false;
+    }
+
+    // 第二条：地形对不对得上。
+    // terrain 是 [行][列]，也就是 [y][x]，所以这里取 terrain[y][x]。
+    // 只有这一格的地形和生物自己的 habitat 相同（鱼 '.' 遇水、wolf '#' 遇陆地）才算能进。
+    return terrain[y][x] == habitat;
 }

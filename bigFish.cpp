@@ -15,10 +15,10 @@
 // 吃得够勤就能一直活到寿命上限 35 才自然老死。
 bigFish::bigFish(int x,int y):Fish(35,x,y,2,25){}
 
-void bigFish::update()
+void bigFish::update(World* world)
 {
     // 大鱼暂时没有额外的行为，直接复用 Fish 的游动逻辑
-    Fish::update();
+    Fish::update(world);
 }
 
 bool bigFish::tryEat(Organism* other)

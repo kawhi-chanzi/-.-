@@ -10,7 +10,7 @@ class bigFish:public Fish
 {
     public:
     bigFish(int x, int y);
-    void update() override;
+    void update(World* world) override;
 
     // ============ 捕食者相关的覆写 ============
     // 尝试吃掉 other：吃到返回 true，够不着或者不能吃返回 false

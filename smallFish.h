@@ -10,7 +10,7 @@ class smallFish:public Fish
 {
     public:
     smallFish(int x, int y  );
-    void update() override;
+    void update(World* world) override;
 
     // ============ 猎物相关的覆写 ============
     // 小鱼被吃掉时，能给捕食者提供多少能量（固定 3 点）。

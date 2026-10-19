@@ -11,10 +11,10 @@
 smallFish::smallFish(int x,int y):Fish(30,x,y,1,30)
 {}
 
-void smallFish::update()
+void smallFish::update(World* world)
 {
     // 小鱼暂时没有额外的行为，直接复用 Fish 的游动逻辑
-    Fish::update();
+    Fish::update(world);
 }
 
 int smallFish::foodValue() const
