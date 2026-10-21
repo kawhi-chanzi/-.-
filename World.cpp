@@ -174,6 +174,7 @@ void World::show()
     // 2) 统计存活数量，并把每只生物画到地图上它自己的坐标处
     int bigCount = 0;
     int smallCount = 0;
+    int wolfCount = 0;
     for (auto c : creatures)
     {
         if (c->isAlive() == false)
@@ -193,6 +194,10 @@ void World::show()
         {
             smallCount++;
         }
+        else if (c->symbol()=='W')
+        {
+            wolfCount++;
+        }
     }
 
     // 3) 打印这一天的地图和存活统计
@@ -206,7 +211,7 @@ void World::show()
         cout << endl;
     }
     cout << "存活数量: 大鱼 " << bigCount << " 条, 小鱼 " << smallCount
-         << " 条, 共 " << (bigCount + smallCount) << " 条" << endl;
+         << " 条, 共 " << (bigCount + smallCount) << " 条鱼,狼" <<wolfCount<<"条"<< endl;
     cout << endl;
 }
 bool World::canEnter(int x, int y, char habitat) const

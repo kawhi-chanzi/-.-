@@ -21,11 +21,11 @@ public:
     // 栖息地：'#' 表示陆地。基类默认是 '.'（水），这里覆写成陆地。
     // 这个值会被基类 update() 拿去和 World 的地形比对：
     // 只有目标格是 '#' 时狼才走得过去，踩到水就原地不动。
-    char habitat() const override{ return '#'; }
+    char habitat() const override;
 
     // 地图上的代号和播报事件时用的名字
-    char symbol() const override{ return 'W'; }
-    std::string name() const override{ return "狼"; }
+    char symbol() const override;
+    std::string name() const override;
 };
 
 

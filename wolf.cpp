@@ -14,3 +14,17 @@ void wolf::update(World* world)
     // 所以这里只做转发。
     Organism::update(world);
 }
+
+char wolf::habitat() const
+{
+    return '#';
+}
+
+std::string wolf::name() const
+{
+    return "狼";
+}
+char wolf::symbol() const
+{
+    return 'W';
+}
