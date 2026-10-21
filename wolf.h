@@ -13,7 +13,7 @@
 class wolf: public Organism
 {
 public:
-    wolf(int life,int x, int y,int speed, int energy);
+    wolf(int x, int y);
 
     // 狼没有额外的行为，走基类的"耗能量 + 地形判定移动"即可
     virtual void update(World* world) override;

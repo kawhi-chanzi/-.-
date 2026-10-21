@@ -137,13 +137,20 @@ int main() {
 
     // 往水里放鱼。想加鱼就照这样继续写 addCreature。
     // 大鱼 'B' 是捕食者，小鱼 's' 是猎物。
+    // 注意：水域只有 x 0~9、y 0~4 这 5 行 10 列（左上角），
+    // 鱼如果放在陆地上，上来就会被地形判定挡住、原地耗到饿死，所以初始坐标必须落在水域内。
     world.addCreature(new bigFish(2, 2));
-    world.addCreature(new bigFish(17, 8));
+    world.addCreature(new bigFish(8, 3));
     world.addCreature(new smallFish(1, 1));
     world.addCreature(new smallFish(5, 3));
     world.addCreature(new smallFish(8, 4));
-    world.addCreature(new smallFish(12, 2));
-    world.addCreature(new smallFish(15, 7));
+    world.addCreature(new smallFish(6, 2));
+    world.addCreature(new smallFish(3, 4));
+
+    // 狼 'W' 是陆地生物，只能走在 '#' 上，所以放在右下陆地（x >= 10 或 y >= 5）。
+    // 寿命 40、速度 1、能量 30：10 天共 30 步，每步扣 1 点。
+    // 陆地上目前没有它的猎物，所以能量会在最后一步耗尽——这是当前设计下的既定行为。
+    world.addCreature(new wolf(16, 7));
 
     // 模拟 10 天，每天 World::STEPS_PER_DAY（=3）步。
     // 每一步发生的事件、以及每天结束时的地图和存活数量，

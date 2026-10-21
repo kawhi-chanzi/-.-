@@ -5,8 +5,8 @@
 #include "wolf.h"
 
 // 构造函数同样把活儿交给基类：生命相关和位置移动相关的成员都由 Organism 初始化
-wolf::wolf(int life,int x, int y,int speed,int energy)
-: Organism(life, x, y, speed, energy) {}
+wolf::wolf(int x, int y)
+: Organism(40, x, y, 1, 30) {}
 
 void wolf::update(World* world)
 {
